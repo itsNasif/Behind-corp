@@ -1,0 +1,33 @@
+# Insert in an existing TLS gateway. Replace origins/certificate paths explicitly.
+# If Cloudflare is used, firewall the origin to Cloudflare and authenticated origin
+# pulls. Trust CF-Connecting-IP only from published Cloudflare CIDRs; never all peers.
+# Log path only, never query strings, cookies, request bodies or authorization.
+log_format redacted '$remote_addr $request_method $uri $status';
+limit_req_zone $binary_remote_addr zone=identity_ip:10m rate=5r/s;
+limit_req_zone $server_name zone=identity_total:1m rate=100r/s;
+server {
+  listen 443 ssl;
+  server_name REPLACE_IDENTITY_HOST;
+  ssl_certificate /run/secrets/tls-fullchain.pem;
+  ssl_certificate_key /run/secrets/tls-key.pem;
+  access_log /var/log/nginx/identity-security.log redacted;
+  client_max_body_size 32k;
+  add_header Strict-Transport-Security "max-age=31536000" always;
+  location /admin/ { return 404; }
+  location /realms/master/ { return 404; }
+  location /health { return 404; }
+  location /metrics { return 404; }
+  location ~ ^/(realms/behind/|resources/) {
+    limit_req zone=identity_ip burst=20 nodelay;
+    limit_req zone=identity_total burst=100 nodelay;
+    limit_req_status 429;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_pass http://127.0.0.1:8080;
+  }
+  location / { return 404; }
+}
+# Administration uses a DIFFERENT virtual host accessible only through VPN/Access.
+# Hostname-admin alone does not restrict admin REST routes; the deny above is mandatory.

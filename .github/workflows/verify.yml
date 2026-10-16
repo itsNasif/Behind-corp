@@ -1,0 +1,46 @@
+name: Verify
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  quality:
+    name: Quality and local integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run local:setup
+      - run: docker compose --env-file .env.local up -d --wait --wait-timeout 180
+      - run: node scripts/keycloak-local-config.mjs
+      - run: npm run db:migrate
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+        env:
+          RUN_INTEGRATION: "1"
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Start distinct-host SSO clients
+        run: npm run local:clients > /tmp/behind-clients.log 2>&1 &
+      - run: npm run test:e2e
+      - run: node scripts/restore-local.mjs
+      - run: node scripts/scan-secrets.mjs
+      - if: always()
+        run: docker compose --env-file .env.local down -v
+# No production credentials. No browser state, mail, screenshots of MFA secrets,
+# identity exports, or request traces are uploaded as CI artifacts.

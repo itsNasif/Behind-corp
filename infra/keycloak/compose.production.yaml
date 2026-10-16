@@ -1,0 +1,52 @@
+# Review and deploy on a persistent private host, never Vercel Functions.
+# Secrets are injected by the host secret manager. No bootstrap admin is preconfigured.
+name: behind-identity
+services:
+  postgres:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASSWORD:?Inject from secret manager}
+    volumes: [identity-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 1g
+    cpus: 1.0
+  keycloak:
+    build: .
+    restart: unless-stopped
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${IDENTITY_DB_PASSWORD:?Inject from secret manager}
+      KC_HOSTNAME: ${IDENTITY_ORIGIN:?Real HTTPS issuer origin required}
+      KC_HOSTNAME_ADMIN: ${IDENTITY_ADMIN_ORIGIN:?Private HTTPS admin origin required}
+      KC_HOSTNAME_STRICT: "true"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_PROXY_TRUSTED_ADDRESSES: ${TRUSTED_PROXY_CIDRS:?Set only the trusted proxy subnet}
+      KC_HTTP_ACCESS_LOG_ENABLED: "false"
+      KC_LOG_LEVEL: "WARN,org.keycloak.events:ERROR"
+      KC_DB_POOL_INITIAL_SIZE: "5"
+      KC_DB_POOL_MIN_SIZE: "5"
+      KC_DB_POOL_MAX_SIZE: "20"
+      JAVA_OPTS_KC_HEAP: "-XX:MaxRAMPercentage=65 -XX:InitialRAMPercentage=35"
+    ports: ["127.0.0.1:8080:8080", "127.0.0.1:9000:9000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    mem_limit: 2g
+    cpus: 2.0
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000; printf \"GET /health/ready HTTP/1.0\\r\\n\\r\\n\" >&3; cat <&3 | grep -q UP'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    security_opt: ["no-new-privileges:true"]
+volumes:
+  identity-data:

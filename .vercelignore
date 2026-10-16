@@ -1,0 +1,11 @@
+.local
+.env*
+infra
+tests
+docs
+scripts
+supabase
+playwright-report
+test-results
+.git
+app/dev-client

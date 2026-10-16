@@ -1,0 +1,93 @@
+@font-face {
+  font-family: Inter;
+  src: url("../fonts/inter.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: Space;
+  src: url("../fonts/space.woff2") format("woff2");
+  font-weight: 300 700;
+  font-display: swap;
+}
+:root {
+  --pf-v5-global--FontFamily--sans-serif: Inter, sans-serif;
+  --pf-v5-global--primary-color--100: #111;
+  --pf-v5-global--primary-color--200: #333;
+  --pf-v5-global--link--Color: #111;
+  --pf-v5-global--link--Color--hover: #444;
+  --pf-v5-global--active-color--100: #777;
+  --pf-v5-global--danger-color--100: #333;
+  --pf-v5-global--success-color--100: #333;
+  --pf-v5-global--warning-color--100: #333;
+  --pf-v5-global--info-color--100: #333;
+  --pf-v5-global--BorderRadius--sm: 0;
+}
+body {
+  font-family: Inter, sans-serif !important;
+}
+h1,
+h2,
+h3,
+.pf-v5-c-title {
+  font-family: Space, sans-serif !important;
+  letter-spacing: -0.035em;
+}
+.pf-v5-c-masthead {
+  background: #111 !important;
+}
+.pf-v5-c-masthead__brand img {
+  width: 145px;
+  height: 45px;
+}
+.pf-v5-c-page__sidebar {
+  background: #181818 !important;
+}
+.pf-v5-c-nav__link.pf-m-current::after {
+  border-color: #fff !important;
+}
+.pf-v5-c-nav__link.pf-m-current {
+  background: #333 !important;
+}
+.pf-v5-c-button {
+  border-radius: 0 !important;
+}
+.pf-v5-c-button.pf-m-primary {
+  background: #111 !important;
+  color: #fff !important;
+}
+.pf-v5-c-button.pf-m-link,
+a:not(.pf-v5-c-nav__link) {
+  color: #333;
+}
+.pf-v5-c-jump-links__link::after {
+  border-color: #555 !important;
+}
+.pf-v5-c-form__label-required {
+  color: #333 !important;
+}
+.pf-v5-c-alert {
+  filter: grayscale(1);
+}
+:focus-visible {
+  outline: 2px solid #777 !important;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.pf-v5-c-form-control::after,
+.pf-v5-c-form-control:focus-within::after {
+  border-color: #333 !important;
+}
+
+.pf-v5-c-masthead__brand img {
+  width: 180px;
+  height: 60px;
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
