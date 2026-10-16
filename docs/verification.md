@@ -48,6 +48,6 @@ The private schema and checksum ledger were applied to the existing Supabase beh
 
 No public website, protected staging URL, production Keycloak, SMTP delivery, real CAPTCHA, deployed Upstash sessions/limits, cloud restore, monitoring, firewall or budget configuration has been verified. No public launch occurred. See the [launch checklist](launch-checklist.md); control-plane access alone does not fulfill these requirements.
 
-## Repository delivery blocker
+## Repository delivery
 
-On 2026-10-14 (Asia/Dhaka), the verified implementation was committed to local main. Git push returned `Permission to itsNasif/Behind-corp.git denied to itsNasif` / HTTP 403. Configuring Git to use the authenticated GitHub CLI credential did not resolve it. The connected GitHub Contents API also returned HTTP 403, `Resource not accessible by integration`. Read access reports ADMIN but does not provide usable write access through these integrations. No remote file was created; the repository remains empty. GitHub Actions has therefore not run. Restore repository Contents write and workflow-file write permission through the GitHub connection, then push the existing local branch without force.
+On 2026-10-17 (Asia/Dhaka), the verified source was pushed to `main` at <https://github.com/itsNasif/Behind-corp>. The initial GitHub Actions workflow run was not checked as part of delivery; confirm its result before treating CI as green.

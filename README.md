@@ -6,7 +6,7 @@ Next.js App Router · React · TypeScript · Tailwind · customized shadcn/ui bu
 
 **Delivery status:** implemented source with local verification. No public production deployment has been authorized or verified. Read [verification](docs/verification.md) and the [launch checklist](docs/launch-checklist.md) for evidence and outstanding work. Legal text requires review. The supplied light/dark logos and favicon are included unchanged.
 
-**Repository delivery blocked (2026-10-14, Asia/Dhaka):** source is committed locally, but both authenticated Git push and the connected GitHub Contents API return HTTP 403. The repository still reports empty. The GitHub connection needs write access to this repository, including workflow-file permissions, before `git push -u origin main` can complete. No pull request, GitHub Actions run, or deployed preview exists.
+**Repository delivery:** source is published on `main` at <https://github.com/itsNasif/Behind-corp>. The initial push completed on 2026-10-17 (Asia/Dhaka). The configured GitHub Actions workflow has not been verified here. No pull request or deployed preview exists.
 
 ## Local development
 

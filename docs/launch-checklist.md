@@ -37,7 +37,7 @@
 
 ## Acceptance and launch
 
-- [ ] Restore GitHub integration write access and push the existing verified local main branch. Git and Contents API both returned HTTP 403; no remote source delivery or GitHub Actions run occurred.
+- [x] Publish the verified source on GitHub `main`. Initial push completed on 2026-10-17 (Asia/Dhaka); verify the GitHub Actions workflow run before treating CI as green.
 
 - [ ] Run the suite on protected staging using real TLS, secure cookies, Supabase, Upstash, CAPTCHA and SMTP.
 - [ ] Verify administrator MFA, attempted removal of the final usable factor, recovery, revocation and existing-user migration on the real issuer.
